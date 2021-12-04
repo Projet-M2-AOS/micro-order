@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
-	"github.com/joho/godotenv"
+	"github.com/b4cktr4ck5r3/micro-order/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -21,14 +20,12 @@ type MongoInstance struct {
 var MI MongoInstance
 
 func ConnectDB() {
-	if os.Getenv("APP_ENV") != "production" {
-		err := godotenv.Load()
-		if err != nil {
-			log.Fatal("Error loading .env file")
-		}
+	credential := options.Credential{
+		Username: config.Config("MONGO_USER"),
+		Password: config.Config("MONGO_PASSWORD"),
 	}
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv("MONGO_URI")))
+	client, err := mongo.NewClient(options.Client().ApplyURI(config.Config("MONGO_URI")).SetAuth(credential))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,6 +47,6 @@ func ConnectDB() {
 
 	MI = MongoInstance{
 		Client: client,
-		DB:     client.Database(os.Getenv("DB")),
+		DB:     client.Database(config.Config("DB")),
 	}
 }
