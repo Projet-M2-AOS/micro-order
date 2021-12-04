@@ -72,7 +72,7 @@ func GetOrder(c *fiber.Ctx) error {
 func AddOrder(c *fiber.Ctx) error {
 	orderCollection := database.MI.DB.Collection("orders")
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	order := new(model.Order)
+	order := new([]model.Order)
 
 	if err := c.BodyParser(order); err != nil {
 		log.Println(err)
@@ -83,7 +83,12 @@ func AddOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	result, err := orderCollection.InsertOne(ctx, order)
+	doc := make([]interface{}, len(*order))
+	for i := 0; i < len(*order); i++ {
+		doc[i] = (*order)[i]
+	}
+
+	result, err := orderCollection.InsertMany(ctx, doc)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"success": false,
