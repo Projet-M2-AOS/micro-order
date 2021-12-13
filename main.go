@@ -21,7 +21,7 @@ func setupRoutes(app *fiber.App) {
 
 	api := app.Group("")
 
-	router.OrderRoute(api.Group("/order"))
+	router.OrderRoute(api.Group("/orders"))
 }
 
 func main() {
