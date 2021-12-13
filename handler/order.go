@@ -22,11 +22,8 @@ func GetAllOrders(c *fiber.Ctx) error {
 	defer cursor.Close(ctx)
 
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "Orders Not found",
-			"error":   err,
-		})
+		return c.Status(fiber.StatusNotFound).JSON(
+			makeErrorMsg(fiber.StatusNotFound, err, "Orders not found"))
 	}
 
 	for cursor.Next(ctx) {
@@ -34,9 +31,7 @@ func GetAllOrders(c *fiber.Ctx) error {
 		cursor.Decode(&order)
 		orders = append(orders, order)
 	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"data": orders,
-	})
+	return c.Status(fiber.StatusOK).JSON(orders)
 }
 
 func GetOrder(c *fiber.Ctx) error {
@@ -47,26 +42,15 @@ func GetOrder(c *fiber.Ctx) error {
 	objId, err := primitive.ObjectIDFromHex(c.Params("id"))
 	findResult := orderCollection.FindOne(ctx, bson.M{"_id": objId})
 	if err := findResult.Err(); err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "Order Not found",
-			"error":   err,
-		})
+		return c.Status(fiber.StatusNotFound).JSON(makeErrorMsg(fiber.StatusNotFound, err, "Order not found"))
 	}
 
 	err = findResult.Decode(&order)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "Order Not found",
-			"error":   err,
-		})
+		return c.Status(fiber.StatusNotFound).JSON(makeErrorMsg(fiber.StatusNotFound, err, "Error during decode order"))
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"data":    order,
-		"success": true,
-	})
+	return c.Status(fiber.StatusOK).JSON(order)
 }
 
 func AddOrder(c *fiber.Ctx) error {
@@ -76,11 +60,7 @@ func AddOrder(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(order); err != nil {
 		log.Println(err)
-		return c.Status(400).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err,
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(makeErrorMsg(fiber.StatusBadRequest, err, "Failed to parse body"))
 	}
 
 	doc := make([]interface{}, len(*order))
@@ -90,18 +70,26 @@ func AddOrder(c *fiber.Ctx) error {
 
 	result, err := orderCollection.InsertMany(ctx, doc)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"message": "Order failed to insert",
-			"error":   err,
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(makeErrorMsg(fiber.StatusInternalServerError, err, "Failed to insert order"))
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"data":    result,
-		"success": true,
-		"message": "Order inserted successfully",
-	})
 
+	var insertedOrder []model.Order
+	for _, element := range result.InsertedIDs {
+		var currentOrder model.Order
+		findResult := orderCollection.FindOne(ctx, bson.M{"_id": element})
+		if err := findResult.Err(); err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(makeErrorMsg(fiber.StatusNotFound, err, "Inserted order not found"))
+		}
+
+		err = findResult.Decode(&currentOrder)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(makeErrorMsg(fiber.StatusInternalServerError, err, "Error during decode order"))
+		}
+
+		insertedOrder = append(insertedOrder, currentOrder)
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(insertedOrder)
 }
 
 func UpdateOrder(c *fiber.Ctx) error {
@@ -111,20 +99,12 @@ func UpdateOrder(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(order); err != nil {
 		log.Println(err)
-		return c.Status(400).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err,
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(makeErrorMsg(fiber.StatusBadRequest, err, "Failed to parse body"))
 	}
 
 	objId, err := primitive.ObjectIDFromHex(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "Order not found",
-			"error":   err,
-		})
+		return c.Status(fiber.StatusNotFound).JSON(makeErrorMsg(fiber.StatusNotFound, err, "Order not found"))
 	}
 
 	update := bson.M{
@@ -132,16 +112,10 @@ func UpdateOrder(c *fiber.Ctx) error {
 	}
 	_, err = orderCollection.UpdateOne(ctx, bson.M{"_id": objId}, update)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"message": "Order failed to update",
-			"error":   err.Error(),
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(makeErrorMsg(fiber.StatusInternalServerError, err, "Error during updating order"))
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"message": "Order updated successfully",
-	})
+
+	return c.Status(fiber.StatusNoContent).Send(nil)
 }
 
 func DeleteOrder(c *fiber.Ctx) error {
@@ -150,22 +124,12 @@ func DeleteOrder(c *fiber.Ctx) error {
 
 	objId, err := primitive.ObjectIDFromHex(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "Order not found",
-			"error":   err,
-		})
+		return c.Status(fiber.StatusNotFound).JSON(makeErrorMsg(fiber.StatusNotFound, err, "Order not found"))
 	}
 	_, err = orderCollection.DeleteOne(ctx, bson.M{"_id": objId})
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"message": "Order failed to delete",
-			"error":   err,
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(makeErrorMsg(fiber.StatusInternalServerError, err, "Error during deleting order"))
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"message": "Order deleted successfully",
-	})
+
+	return c.Status(fiber.StatusNoContent).Send(nil)
 }
