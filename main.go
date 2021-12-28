@@ -3,12 +3,13 @@ package main
 import (
 	"log"
 
-	"github.com/b4cktr4ck5r3/micro-order/config"
 	"github.com/b4cktr4ck5r3/micro-order/database"
+	_ "github.com/b4cktr4ck5r3/micro-order/docs"
 	"github.com/b4cktr4ck5r3/micro-order/router"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
 func setupRoutes(app *fiber.App) {
@@ -19,11 +20,15 @@ func setupRoutes(app *fiber.App) {
 		})
 	})
 
-	api := app.Group("")
+	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
+	api := app.Group("")
 	router.OrderRoute(api.Group("/orders"))
 }
 
+// @title Order micro-service
+// @version 1.0
+// @description Order micro-service documentation.
 func main() {
 	app := fiber.New()
 
@@ -34,8 +39,8 @@ func main() {
 
 	setupRoutes(app)
 
-	port := config.Config("PORT")
-	err := app.Listen(":" + port)
+	// port := config.Config("PORT")
+	err := app.Listen(":9999")
 
 	if err != nil {
 		log.Fatal("Error app failed to start")

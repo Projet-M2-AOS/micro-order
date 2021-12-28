@@ -13,6 +13,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// @Summary Get all orders.
+// @Description Return all orders.
+// @Tags Orders
+// @Produce json
+// @Success 200 {array} model.Order
+// @Router /orders [get]
 func GetAllOrders(c *fiber.Ctx) error {
 	orderCollection := database.MI.DB.Collection("orders")
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
@@ -35,6 +41,13 @@ func GetAllOrders(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(orders)
 }
 
+// @Summary Get one orders.
+// @Description Return one orders.
+// @Tags Orders
+// @Produce json
+// @Param id path string true "Order ID"
+// @Success 200 {object} model.Order
+// @Router /orders/{id} [get]
 func GetOrder(c *fiber.Ctx) error {
 	orderCollection := database.MI.DB.Collection("orders")
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
@@ -54,6 +67,14 @@ func GetOrder(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(order)
 }
 
+// @Summary Create a new order
+// @Description Create a new order with the input payload
+// @Tags Orders
+// @Accept  json
+// @Produce  json
+// @Param Order body model.Order true "Create order"
+// @Success 200 {array} model.Order
+// @Router /orders [post]
 func AddOrder(c *fiber.Ctx) error {
 	orderCollection := database.MI.DB.Collection("orders")
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
@@ -106,6 +127,15 @@ func AddOrder(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(insertedOrder)
 }
 
+// @Summary Update order
+// @Description Update order with the input payload
+// @Tags Orders
+// @Accept  json
+// @Produce  json
+// @Param Order body model.Order true "Update order"
+// @Param id path string true "Order ID"
+// @Success 201
+// @Router /orders/{id} [put]
 func UpdateOrder(c *fiber.Ctx) error {
 	orderCollection := database.MI.DB.Collection("orders")
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
@@ -154,6 +184,14 @@ func UpdateOrder(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusNoContent).JSON(updatedOrder)
 }
 
+// @Summary Delete order
+// @Description Delete order
+// @Tags Orders
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Order ID"
+// @Success 201
+// @Router /orders/{id} [delete]
 func DeleteOrder(c *fiber.Ctx) error {
 	orderCollection := database.MI.DB.Collection("orders")
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)

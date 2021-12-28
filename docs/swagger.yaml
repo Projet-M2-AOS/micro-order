@@ -1,0 +1,130 @@
+definitions:
+  model.Order:
+    properties:
+      _id:
+        type: string
+      address:
+        type: string
+      paymentState:
+        type: string
+      price:
+        type: number
+      products:
+        items:
+          type: string
+        type: array
+      user:
+        type: string
+    required:
+    - address
+    - paymentState
+    - price
+    - products
+    - user
+    type: object
+info:
+  contact: {}
+  description: Order micro-service documentation.
+  title: Order micro-service
+  version: "1.0"
+paths:
+  /orders:
+    get:
+      description: Return all orders.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Order'
+            type: array
+      summary: Get all orders.
+      tags:
+      - Orders
+    post:
+      consumes:
+      - application/json
+      description: Create a new order with the input payload
+      parameters:
+      - description: Create order
+        in: body
+        name: Order
+        required: true
+        schema:
+          $ref: '#/definitions/model.Order'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Order'
+            type: array
+      summary: Create a new order
+      tags:
+      - Orders
+  /orders/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ""
+      summary: Delete order
+      tags:
+      - Orders
+    get:
+      description: Return one orders.
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Order'
+      summary: Get one orders.
+      tags:
+      - Orders
+    put:
+      consumes:
+      - application/json
+      description: Update order with the input payload
+      parameters:
+      - description: Update order
+        in: body
+        name: Order
+        required: true
+        schema:
+          $ref: '#/definitions/model.Order'
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ""
+      summary: Update order
+      tags:
+      - Orders
+swagger: "2.0"
