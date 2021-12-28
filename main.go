@@ -3,8 +3,10 @@ package main
 import (
 	"log"
 
+	"github.com/b4cktr4ck5r3/micro-order/config"
 	"github.com/b4cktr4ck5r3/micro-order/database"
 	_ "github.com/b4cktr4ck5r3/micro-order/docs"
+	"github.com/b4cktr4ck5r3/micro-order/handler"
 	"github.com/b4cktr4ck5r3/micro-order/router"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -21,6 +23,7 @@ func setupRoutes(app *fiber.App) {
 	})
 
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
+	app.Get("/docs-json", handler.GetSwaggerJson)
 
 	api := app.Group("")
 	router.OrderRoute(api.Group("/orders"))
@@ -39,8 +42,8 @@ func main() {
 
 	setupRoutes(app)
 
-	// port := config.Config("PORT")
-	err := app.Listen(":9999")
+	port := config.Config("PORT")
+	err := app.Listen(":" + port)
 
 	if err != nil {
 		log.Fatal("Error app failed to start")
