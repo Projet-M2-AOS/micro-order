@@ -38,6 +38,11 @@ func GetAllOrders(c *fiber.Ctx) error {
 		cursor.Decode(&order)
 		orders = append(orders, order)
 	}
+
+	if len(orders) == 0 {
+		return c.Status(fiber.StatusOK).JSON([]model.Order{})
+	}
+
 	return c.Status(fiber.StatusOK).JSON(orders)
 }
 

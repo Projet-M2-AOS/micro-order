@@ -46,7 +46,7 @@ func main() {
 	err := app.Listen(":" + port)
 
 	if err != nil {
-		log.Fatal("Error app failed to start")
+		log.Fatal("Error app failed to start : " + err.Error())
 		panic(err)
 	}
 }
