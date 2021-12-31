@@ -24,8 +24,14 @@ func GetAllOrders(c *fiber.Ctx) error {
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
 	var orders []model.Order
+	userId, err := primitive.ObjectIDFromHex(c.Query("userId"))
 
-	cursor, err := orderCollection.Find(ctx, bson.D{})
+	filter := bson.M{}
+	if err == nil {
+		filter = bson.M{"user": bson.M{"$eq": userId}}
+	}
+
+	cursor, err := orderCollection.Find(ctx, filter)
 	defer cursor.Close(ctx)
 
 	if err != nil {
