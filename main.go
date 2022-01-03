@@ -14,17 +14,14 @@ import (
 	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
+// Add routes to fiber instance
 func setupRoutes(app *fiber.App) {
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"success": true,
-			"message": "You are at the root endpoint 😉",
-		})
-	})
-
+	//swagger doc
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
+	//swagger json format
 	app.Get("/docs-json", handler.GetSwaggerJson)
 
+	//orders endpoints
 	api := app.Group("")
 	router.OrderRoute(api.Group("/orders"))
 }
@@ -33,18 +30,26 @@ func setupRoutes(app *fiber.App) {
 // @version 1.0
 // @description Order micro-service documentation.
 func main() {
+	//create new fiber instance
 	app := fiber.New()
 
+	//allow cors
 	app.Use(cors.New())
+	//allow logs
 	app.Use(logger.New())
 
+	//connect to mongo database
 	database.ConnectDB()
 
+	//add routes
 	setupRoutes(app)
 
+	//get port from env variable
 	port := config.Config("PORT")
+	//run web server instance
 	err := app.Listen(":" + port)
 
+	//check for error during running
 	if err != nil {
 		log.Fatal("Error app failed to start : " + err.Error())
 		panic(err)

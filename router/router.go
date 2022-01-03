@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// CRUD endpoints for /orders routes, with associated handler
 func OrderRoute(route fiber.Router) {
 	route.Get("/", handler.GetAllOrders)
 	route.Get("/:id", handler.GetOrder)

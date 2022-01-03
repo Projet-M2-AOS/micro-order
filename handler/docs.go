@@ -9,7 +9,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+//Retrieve swagger json file created after using the command swag init (from swaggo module) as response
 func GetSwaggerJson(c *fiber.Ctx) error {
+	//Try to open generated swagger.json file
 	jsonFile, err := os.Open("docs/swagger.json")
 	if err != nil {
 		fmt.Println(err)
@@ -17,8 +19,10 @@ func GetSwaggerJson(c *fiber.Ctx) error {
 	}
 
 	defer jsonFile.Close()
+	//Read file if opened
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	var anyJson map[string]interface{}
+	//Deserialize bytes of readed file ton anonymous structure (map[string]interface{})
 	json.Unmarshal(byteValue, &anyJson)
 	return c.Status(200).JSON(anyJson)
 }

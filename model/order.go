@@ -5,6 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+//Order schema
 type Order struct {
 	ID           primitive.ObjectID   `json:"_id,omitempty" bson:"_id,omitempty"`
 	User         primitive.ObjectID   `json:"user,omitempty" bson:"user,omitempty" validate:"required"`
@@ -14,6 +15,7 @@ type Order struct {
 	PaymentState string               `json:"paymentState,omitempty" bson:"paymentState,omitempty" validate:"required"`
 }
 
+//Validate struct field with the defined validation rules
 func ValidateStruct(order Order) string {
 	strError := ""
 	validate := validator.New()
