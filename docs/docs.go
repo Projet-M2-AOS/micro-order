@@ -30,9 +30,17 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "micro-orders"
                 ],
                 "summary": "Get all orders.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "search by userid",
+                        "name": "user",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -54,7 +62,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "micro-orders"
                 ],
                 "summary": "Create a new order",
                 "parameters": [
@@ -88,7 +96,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "micro-orders"
                 ],
                 "summary": "Get one orders.",
                 "parameters": [
@@ -118,7 +126,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "micro-orders"
                 ],
                 "summary": "Update order",
                 "parameters": [
@@ -154,7 +162,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "micro-orders"
                 ],
                 "summary": "Delete order",
                 "parameters": [

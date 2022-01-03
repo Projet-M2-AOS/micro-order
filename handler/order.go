@@ -15,7 +15,8 @@ import (
 
 // @Summary Get all orders.
 // @Description Return all orders.
-// @Tags Orders
+// @Tags micro-orders
+// @Param user query string false "search by userid"
 // @Produce json
 // @Success 200 {array} model.Order
 // @Router /orders [get]
@@ -54,7 +55,7 @@ func GetAllOrders(c *fiber.Ctx) error {
 
 // @Summary Get one orders.
 // @Description Return one orders.
-// @Tags Orders
+// @Tags micro-orders
 // @Produce json
 // @Param id path string true "Order ID"
 // @Success 200 {object} model.Order
@@ -80,7 +81,7 @@ func GetOrder(c *fiber.Ctx) error {
 
 // @Summary Create a new order
 // @Description Create a new order with the input payload
-// @Tags Orders
+// @Tags micro-orders
 // @Accept  json
 // @Produce  json
 // @Param Order body model.Order true "Create order"
@@ -140,7 +141,7 @@ func AddOrder(c *fiber.Ctx) error {
 
 // @Summary Update order
 // @Description Update order with the input payload
-// @Tags Orders
+// @Tags micro-orders
 // @Accept  json
 // @Produce  json
 // @Param Order body model.Order true "Update order"
@@ -197,7 +198,7 @@ func UpdateOrder(c *fiber.Ctx) error {
 
 // @Summary Delete order
 // @Description Delete order
-// @Tags Orders
+// @Tags micro-orders
 // @Accept  json
 // @Produce  json
 // @Param id path string true "Order ID"

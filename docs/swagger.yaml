@@ -31,6 +31,11 @@ paths:
   /orders:
     get:
       description: Return all orders.
+      parameters:
+      - description: search by userid
+        in: query
+        name: user
+        type: string
       produces:
       - application/json
       responses:
@@ -42,7 +47,7 @@ paths:
             type: array
       summary: Get all orders.
       tags:
-      - Orders
+      - micro-orders
     post:
       consumes:
       - application/json
@@ -65,7 +70,7 @@ paths:
             type: array
       summary: Create a new order
       tags:
-      - Orders
+      - micro-orders
   /orders/{id}:
     delete:
       consumes:
@@ -84,7 +89,7 @@ paths:
           description: ""
       summary: Delete order
       tags:
-      - Orders
+      - micro-orders
     get:
       description: Return one orders.
       parameters:
@@ -102,7 +107,7 @@ paths:
             $ref: '#/definitions/model.Order'
       summary: Get one orders.
       tags:
-      - Orders
+      - micro-orders
     put:
       consumes:
       - application/json
@@ -126,5 +131,5 @@ paths:
           description: ""
       summary: Update order
       tags:
-      - Orders
+      - micro-orders
 swagger: "2.0"

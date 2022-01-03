@@ -14,9 +14,17 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "micro-orders"
                 ],
                 "summary": "Get all orders.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "search by userid",
+                        "name": "user",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -38,7 +46,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "micro-orders"
                 ],
                 "summary": "Create a new order",
                 "parameters": [
@@ -72,7 +80,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "micro-orders"
                 ],
                 "summary": "Get one orders.",
                 "parameters": [
@@ -102,7 +110,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "micro-orders"
                 ],
                 "summary": "Update order",
                 "parameters": [
@@ -138,7 +146,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "micro-orders"
                 ],
                 "summary": "Delete order",
                 "parameters": [
